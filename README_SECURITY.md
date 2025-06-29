@@ -50,16 +50,83 @@ appsettings.json
 appsettings.Development.json
 appsettings.Production.json
 
-# Otros archivos sensibles
-*.pfx
-*.p12
-*.key
-*.pem
-secrets/
-config/secrets/
+# Logs y archivos temporales
+logs/
+*.log
+
+# Archivos de build
+bin/
+obj/
 ```
 
-### 3. Archivos de Template
+### 3. Protección de Logs 🔒
+
+**Los archivos de logs están completamente protegidos:**
+
+```gitignore
+# Protección automática en .gitignore
+[Ll]og/        # Carpetas log/Log
+[Ll]ogs/       # Carpetas logs/Logs  
+*.log          # Archivos .log individuales
+```
+
+**Uso seguro de logs:**
+- ✅ Usar carpeta `logs/` para todos los archivos de log
+- ✅ Los logs se rotan automáticamente (configurado en Program.cs)
+- ❌ NUNCA loguear passwords, tokens o datos sensibles completos
+- ❌ NUNCA commitear archivos de log al repositorio
+
+**Verificación de protección:**
+```bash
+# Verificar que logs está ignorado
+git check-ignore logs/
+
+# Debe mostrar: logs/
+```
+
+### 4. Sistema de Templates de Configuración 📝
+
+**Este proyecto usa un sistema seguro de templates:**
+
+**✅ Archivos que SÍ se suben a GitHub:**
+```
+appsettings.template.json              ← Template principal con variables ${VAR}
+appsettings.Development.template.json  ← Template para desarrollo
+.env.example                          ← Ejemplo de variables de entorno
+```
+
+**❌ Archivos que NUNCA se suben:**
+```
+appsettings.json                      ← Configuración real (generada localmente)
+appsettings.Development.json          ← Configuración de desarrollo real
+.env                                  ← Variables de entorno reales
+```
+
+**🔧 Configuración Local:**
+
+1. **Crear archivos de configuración reales:**
+```bash
+# Copiar template y rellenar con valores reales
+cp appsettings.template.json appsettings.json
+cp appsettings.Development.template.json appsettings.Development.json
+
+# Editar los archivos copiados con datos reales
+```
+
+2. **Configurar variables de entorno:**
+```bash
+# Copiar ejemplo y rellenar
+cp .env.example .env
+# Editar .env con valores reales
+```
+
+**🎯 Ventajas del Sistema de Templates:**
+- ✅ **Seguridad**: No hay riesgo de subir secretos por error
+- ✅ **Colaboración**: Nuevos desarrolladores saben qué configurar
+- ✅ **Mantenimiento**: Cambios de estructura se reflejan en templates
+- ✅ **Documentación**: Templates sirven como documentación viva
+
+### 5. Archivos de Template
 
 Crea archivos de ejemplo SIN secretos reales:
 
@@ -87,7 +154,7 @@ Crea archivos de ejemplo SIN secretos reales:
 }
 ```
 
-### 4. Azure Key Vault (Producción)
+### 6. Azure Key Vault (Producción)
 
 Para producción en Azure:
 
@@ -104,7 +171,7 @@ if (builder.Environment.IsProduction())
 }
 ```
 
-### 5. GitHub Secrets (CI/CD)
+### 7. GitHub Secrets (CI/CD)
 
 En GitHub Repository → Settings → Secrets and variables → Actions:
 
@@ -113,7 +180,7 @@ En GitHub Repository → Settings → Secrets and variables → Actions:
 - `SMTP_PASSWORD`
 - etc.
 
-### 6. Docker Secrets
+### 8. Docker Secrets
 
 Para contenedores:
 
