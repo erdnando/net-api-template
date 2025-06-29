@@ -182,8 +182,15 @@ public class PasswordResetService : IPasswordResetService
 
     private string GetBaseUrl()
     {
-        var request = _httpContextAccessor.HttpContext?.Request;
-        if (request == null) return "http://localhost:3000"; // Fallback for dev
-        return $"{request.Scheme}://{request.Host}";
+        // Obtener URL del frontend desde configuración
+        var frontendBaseUrl = _configuration["AppSettings:FrontendBaseUrl"];
+        
+        if (!string.IsNullOrEmpty(frontendBaseUrl))
+        {
+            return frontendBaseUrl;
+        }
+        
+        // Fallback para desarrollo si no está configurado
+        return "http://localhost:3000";
     }
 }

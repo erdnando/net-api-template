@@ -63,6 +63,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISecurityLoggerService, SecurityLoggerService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
+builder.Services.AddScoped<IUtilsService, UtilsService>();
 
 // Register repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
