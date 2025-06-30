@@ -1,75 +1,114 @@
-# 🚀 NetAPI Template - .NET 9 Secure REST API
+# � .NET Core 9 Backend API
 
-Una API REST segura desarrollada con .NET 9, MySQL, JWT Authentication y buenas prácticas de seguridad siguiendo OWASP Top 10.
-
-## 🔒 **IMPORTANTE - Configuración de Seguridad**
-
-**⚠️ Antes de ejecutar en desarrollo:**
-
-1. **Configurar variables de entorno:**
-   ```bash
-   cp .env.example .env
-   # Editar .env con valores reales
-   ```
-
-2. **Configurar appsettings:**
-   ```bash
-   cp appsettings.template.json appsettings.json
-   # Actualizar con valores de producción
-   ```
-
-3. **Verificar seguridad antes de subir a GitHub:**
-   ```bash
-   ./security-check.sh
-   ```
+Secure REST API desarrollada con .NET Core 9, MySQL, JWT Authentication y mejores prácticas de seguridad.
 
 ## ⚡ **Inicio Rápido**
 
-### Prerequisitos
-- .NET 9 SDK
-- MySQL 8.0+
-- Visual Studio Code o Visual Studio
+```bash
+# Desde la raíz del proyecto full-stack
+./start-backend.sh
 
-### Instalación
+# O desde este directorio
+dotnet run
+```
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone <tu-repo>
-   cd netapi-template
-   ```
+**🌐 URLs:**
+- **API**: http://localhost:5000
+- **Swagger**: http://localhost:5000/swagger
 
-2. **Configurar variables de entorno:**
-   ```bash
-   cp .env.example .env
-   # Editar .env con tus valores reales
-   ```
+## 📚 **Documentación Completa**
 
-3. **Restaurar paquetes:**
-   ```bash
-   dotnet restore
-   ```
+Toda la documentación está organizada en [`docs/`](./docs/README.md):
 
-4. **Ejecutar migraciones:**
-   ```bash
-   dotnet ef database update
-   ```
+- 🚀 [**Setup y Configuración**](./docs/setup/) - Configuración local, MySQL, variables de entorno
+- 🔐 [**Seguridad**](./docs/security/) - Autenticación, validaciones, logs de seguridad  
+- 🎯 [**Funcionalidades**](./docs/features/) - Password reset, Utils system
+- 🔌 [**API Documentation**](./docs/api/) - Endpoints, DTOs, especificaciones
+- 🚀 [**Deployment**](./docs/deployment/) - Guías de deploy y CI/CD
+- 📋 [**Reports**](./docs/reports/) - Bug fixes, investigaciones, mejoras
 
-5. **Ejecutar la aplicación:**
-   ```bash
-   dotnet run
-   ```
+## 🛠️ **Tech Stack**
 
-6. **Acceder a Swagger:**
-   - Desarrollo: `https://localhost:7001/swagger`
-   - Producción: `https://tu-dominio.com/swagger`
+- **Framework**: .NET Core 9
+- **Base de datos**: MySQL + Entity Framework Core
+- **Autenticación**: JWT Tokens
+- **API Docs**: Swagger/OpenAPI
+- **Testing**: xUnit
+- **Logging**: Serilog
+- **Validation**: FluentValidation
+## 📂 **Estructura del Proyecto**
 
-## 🛡️ **Características de Seguridad**
+```
+netapi-template/
+├── docs/                     # 📚 Documentación organizada
+├── Controllers/             # 🎮 API Controllers
+├── Services/                # 🔧 Business Logic Services
+├── Models/                  # 📋 Entity Models
+├── DTOs/                    # 📦 Data Transfer Objects
+├── Data/                    # 🗄️ Database Context
+├── Middleware/              # 🔧 Custom Middleware
+├── Configurations/          # ⚙️ App Configuration
+└── Tests/                   # 🧪 Unit & Integration Tests
+```
 
-### ✅ Implementadas
-- **Authentication & Authorization**: JWT con roles
-- **Input Validation**: Data Annotations y validaciones personalizadas  
-- **SQL Injection Protection**: Entity Framework Core
-- **HTTPS Enforcement**: Configurado por defecto
+## 🔐 **Seguridad Implementada**
+
+- ✅ **JWT Authentication** con roles y permisos
+- ✅ **Input Validation** y sanitización
+- ✅ **SQL Injection Protection** via EF Core
+- ✅ **CORS** configurado para desarrollo
+- ✅ **Rate Limiting** en endpoints críticos
+- ✅ **Security Headers** (HSTS, CSP, etc.)
+- ✅ **Logging de seguridad** y auditoría
+
+## 🧪 **Testing**
+
+```bash
+# Ejecutar todos los tests
+dotnet test
+
+# Con coverage
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+## 🚀 **Scripts Disponibles**
+
+```bash
+# Desarrollo (desde raíz del proyecto)
+./start-backend.sh          # Inicia solo el backend
+./start-fullstack.sh        # Inicia backend + frontend
+
+# Organización
+./cleanup-backend-docs.sh   # Organiza documentación
+```
+
+## 🔧 **Configuración Rápida**
+
+### **Variables de Entorno (.env):**
+```bash
+DB_CONNECTION_STRING="Server=localhost;Database=netapi;User=root;Password=tu_password;"
+JWT_SECRET="tu-jwt-secret-super-seguro"
+JWT_ISSUER="NetApiTemplate"
+CORS_ORIGINS="http://localhost:3000"
+```
+
+### **Base de Datos:**
+```bash
+# Crear migración
+dotnet ef migrations add NombreMigracion
+
+# Aplicar migración
+dotnet ef database update
+```
+
+## 🤝 **Contribución**
+
+1. Consulta la [documentación completa](./docs/README.md)
+2. Revisa [configuración de seguridad](./docs/security/)
+3. Sigue las [mejores prácticas](./docs/setup/)
+
+---
+💡 **Para información detallada**, consulta [`docs/README.md`](./docs/README.md)
 - **Security Headers**: HSTS, Content-Type-Options, Frame-Options, etc.
 - **Rate Limiting**: Protección contra ataques de fuerza bruta
 - **Password Security**: Hashing seguro con Salt

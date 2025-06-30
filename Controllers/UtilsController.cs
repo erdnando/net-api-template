@@ -298,4 +298,67 @@ public class UtilsController : ControllerBase
             return StatusCode(500, new { message = "Error interno del servidor" });
         }
     }
+
+    /// <summary>
+    /// Busca usuarios por email parcial para autocomplete
+    /// </summary>
+    /// <param name="email">Email parcial para buscar</param>
+    /// <returns>Lista de emails que coinciden</returns>
+    [HttpGet("search-users")]
+    [SwaggerOperation(
+        Summary = "Buscar usuarios por email",
+        Description = "Busca usuarios por email parcial para funcionalidad de autocomplete. Solo para administradores."
+    )]
+    [SwaggerResponse(200, "Búsqueda realizada exitosamente", typeof(UtilsSearchUsersResponseDto))]
+    [SwaggerResponse(400, "Parámetros inválidos")]
+    [SwaggerResponse(401, "No autorizado")]  
+    [SwaggerResponse(403, "Permisos insuficientes")]
+    public async Task<ActionResult<UtilsSearchUsersResponseDto>> SearchUsers([FromQuery] string email)
+    {
+        try
+        {
+            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(adminEmail))
+            {
+                return Unauthorized();
+            }
+
+            var isAdmin = await _utilsService.IsAdminUserAsync(adminEmail);
+            if (!isAdmin)
+            {
+                return StatusCode(403, new { message = "Solo los administradores pueden buscar usuarios" });
+            }
+
+            // Validar parámetros de entrada
+            if (string.IsNullOrWhiteSpace(email) || email.Length < 2)
+            {
+                return BadRequest(new { message = "El email debe tener al menos 2 caracteres" });
+            }
+
+            var users = await _utilsService.SearchUsersByEmailAsync(email);
+
+            return Ok(new UtilsSearchUsersResponseDto
+            {
+                Success = true,
+                Message = $"Se encontraron {users.Length} usuarios",
+                Data = new UtilsSearchUsersDataDto
+                {
+                    Users = users
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error searching users by email: {Email}", email);
+            return StatusCode(500, new UtilsSearchUsersResponseDto
+            {
+                Success = false,
+                Message = "Error interno del servidor",
+                Data = new UtilsSearchUsersDataDto
+                {
+                    Users = Array.Empty<string>()
+                }
+            });
+        }
+    }
 }

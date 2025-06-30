@@ -301,6 +301,37 @@ public class UtilsService : IUtilsService
             .AnyAsync(u => u.Email.ToLower() == email.ToLower());
     }
 
+    public async Task<string[]> SearchUsersByEmailAsync(string partialEmail)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(partialEmail) || partialEmail.Length < 2)
+            {
+                return Array.Empty<string>();
+            }
+
+            var searchTerm = partialEmail.ToLower().Trim();
+
+            var users = await _context.Users
+                .Where(u => u.Email.ToLower().Contains(searchTerm) && 
+                           u.Status == UserStatus.Active) // Solo usuarios activos
+                .OrderBy(u => u.Email)
+                .Take(15) // Limitar a 15 resultados
+                .Select(u => u.Email)
+                .ToArrayAsync();
+
+            _logger.LogInformation("Searched users with email containing '{SearchTerm}', found {Count} results", 
+                searchTerm, users.Length);
+
+            return users;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error searching users by email: {PartialEmail}", partialEmail);
+            return Array.Empty<string>();
+        }
+    }
+
     public async Task<bool> IsAdminUserAsync(string email)
     {
         // Esta implementación depende de cómo tengas configurados los roles

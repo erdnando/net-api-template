@@ -113,3 +113,19 @@ public class UtilsOperationResponseDto
     public DateTime ProcessedAt { get; set; } = DateTime.UtcNow;
     public Dictionary<string, object> Data { get; set; } = new();
 }
+
+// ========================================
+// 🔍 Búsqueda de Usuarios (Utils)
+// ========================================
+
+public class UtilsSearchUsersResponseDto
+{
+    public bool Success { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public UtilsSearchUsersDataDto Data { get; set; } = new();
+}
+
+public class UtilsSearchUsersDataDto
+{
+    public string[] Users { get; set; } = Array.Empty<string>();
+}

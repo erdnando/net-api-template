@@ -81,6 +81,13 @@ public interface IUtilsService
     Task<bool> UserExistsAsync(string email);
 
     /// <summary>
+    /// Busca usuarios por email parcial para autocomplete
+    /// </summary>
+    /// <param name="partialEmail">Email parcial para buscar</param>
+    /// <returns>Array de emails que coinciden</returns>
+    Task<string[]> SearchUsersByEmailAsync(string partialEmail);
+
+    /// <summary>
     /// Valida si un usuario tiene permisos de administrador
     /// </summary>
     /// <param name="email">Email del usuario</param>
