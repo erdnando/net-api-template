@@ -82,8 +82,13 @@ public class PasswordResetService : IPasswordResetService
         await _context.SaveChangesAsync();
 
         // Enviar email
-        var resetUrl = $"{GetBaseUrl()}/reset-password?token={token}";
+        var baseUrl = GetBaseUrl();
+        var resetUrl = $"{baseUrl}/reset-password?token={token}";
         var emailBody = GenerateResetEmailBody(user.FirstName, resetUrl, expirationMinutes);
+        
+        // Log para debug
+        _logger.LogInformation("Generated reset URL: {ResetUrl}", resetUrl);
+        _logger.LogInformation("Base URL from config: {BaseUrl}", baseUrl);
         
         try
         {
@@ -160,18 +165,68 @@ public class PasswordResetService : IPasswordResetService
     private string GenerateResetEmailBody(string userName, string resetUrl, int expirationMinutes)
     {
         return $@"
-            <html>
-                <body style='font-family: Arial, sans-serif;'>
-                    <h2>Recuperación de Contraseña</h2>
-                    <p>Hola {userName},</p>
-                    <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta.</p>
-                    <p>Para continuar con el proceso, haz clic en el siguiente enlace:</p>
-                    <p><a href='{resetUrl}' style='background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Restablecer Contraseña</a></p>
-                    <p>Este enlace expirará en {expirationMinutes} minutos.</p>
-                    <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
-                    <p>Saludos,<br>El Equipo de Soporte</p>
-                </body>
-            </html>";
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Recuperación de Contraseña</title>
+</head>
+<body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;'>
+    <div style='background-color: #f8f9fa; padding: 30px; border-radius: 10px;'>
+        <h2 style='color: #2c3e50; text-align: center; margin-bottom: 30px;'>Recuperación de Contraseña</h2>
+        
+        <p style='font-size: 16px; margin-bottom: 20px;'>Hola <strong>{userName}</strong>,</p>
+        
+        <p style='font-size: 16px; margin-bottom: 20px;'>
+            Hemos recibido una solicitud para restablecer la contraseña de tu cuenta.
+        </p>
+        
+        <p style='font-size: 16px; margin-bottom: 30px;'>
+            Para continuar con el proceso, haz clic en el siguiente botón:
+        </p>
+        
+        <div style='text-align: center; margin: 40px 0;'>
+            <a href='{resetUrl}' 
+               style='display: inline-block; 
+                      background-color: #4CAF50; 
+                      color: white !important; 
+                      padding: 15px 30px; 
+                      text-decoration: none; 
+                      border-radius: 5px; 
+                      font-size: 16px; 
+                      font-weight: bold;
+                      text-align: center;'>
+                Restablecer Contraseña
+            </a>
+        </div>
+        
+        <p style='font-size: 14px; margin-bottom: 20px; color: #666;'>
+            Si el botón no funciona, puedes copiar y pegar el siguiente enlace en tu navegador:
+        </p>
+        
+        <p style='font-size: 14px; margin-bottom: 30px; word-break: break-all; background-color: #f1f1f1; padding: 10px; border-radius: 5px;'>
+            <a href='{resetUrl}' style='color: #007bff; text-decoration: underline;'>{resetUrl}</a>
+        </p>
+        
+        <p style='font-size: 14px; margin-bottom: 20px; color: #e74c3c;'>
+            <strong>⚠️ Este enlace expirará en {expirationMinutes} minutos.</strong>
+        </p>
+        
+        <p style='font-size: 14px; margin-bottom: 30px; color: #666;'>
+            Si no solicitaste este cambio, puedes ignorar este correo. Tu contraseña no será modificada.
+        </p>
+        
+        <hr style='border: none; border-top: 1px solid #eee; margin: 30px 0;'>
+        
+        <p style='font-size: 14px; color: #666; text-align: center;'>
+            Saludos,<br>
+            <strong>El Equipo de Soporte</strong><br>
+            Sistema V1.0
+        </p>
+    </div>
+</body>
+</html>";
     }
 
     private string GetClientIp()
@@ -182,15 +237,27 @@ public class PasswordResetService : IPasswordResetService
 
     private string GetBaseUrl()
     {
-        // Obtener URL del frontend desde configuración
-        var frontendBaseUrl = _configuration["AppSettings:FrontendBaseUrl"];
+        // Intentar obtener directamente de la variable de entorno
+        var frontendBaseUrl = Environment.GetEnvironmentVariable("FRONTEND_BASE_URL");
+        
+        _logger.LogInformation("Frontend base URL from environment: {FrontendBaseUrl}", frontendBaseUrl ?? "NULL");
         
         if (!string.IsNullOrEmpty(frontendBaseUrl))
         {
             return frontendBaseUrl;
         }
         
-        // Fallback para desarrollo si no está configurado
+        // Fallback: intentar desde configuración
+        frontendBaseUrl = _configuration["AppSettings:FrontendBaseUrl"];
+        _logger.LogInformation("Frontend base URL from config: {FrontendBaseUrl}", frontendBaseUrl ?? "NULL");
+        
+        if (!string.IsNullOrEmpty(frontendBaseUrl) && !frontendBaseUrl.StartsWith("${"))
+        {
+            return frontendBaseUrl;
+        }
+        
+        // Fallback final para desarrollo
+        _logger.LogWarning("Frontend base URL not configured, using fallback: http://localhost:3000");
         return "http://localhost:3000";
     }
 }
