@@ -16,8 +16,8 @@ public class ModuleResponseDto
     public string Path { get; set; } = string.Empty;
     [MaxLength(100)]
     public string Icon { get; set; } = string.Empty;
-    public bool AdminOnly { get; set; } = false;
     public int Order { get; set; }
+    public string Code { get; set; } = string.Empty;
 }
 
 public class CreateModuleDto
@@ -32,7 +32,6 @@ public class CreateModuleDto
     public string Path { get; set; } = string.Empty;
     [MaxLength(100)]
     public string Icon { get; set; } = string.Empty;
-    public bool AdminOnly { get; set; } = false;
     public int Order { get; set; }
     [Required]
     [MaxLength(50)]

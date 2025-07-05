@@ -31,8 +31,8 @@ public class ModulesController : ControllerBase
                 Description = m.Description,
                 Path = m.Path,
                 Icon = m.Icon,
-                AdminOnly = m.AdminOnly,
-                Order = m.Order
+                Order = m.Order,
+                Code = m.Code
             })
             .ToListAsync();
         return Ok(modules);
@@ -48,9 +48,8 @@ public class ModulesController : ControllerBase
             Description = dto.Description,
             Path = dto.Path,
             Icon = dto.Icon,
-            AdminOnly = dto.AdminOnly,
             Order = dto.Order,
-            Code = dto.Code ?? string.Empty,
+            Code = dto.Code,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
             IsDeleted = false
@@ -75,8 +74,8 @@ public class ModulesController : ControllerBase
             Description = module.Description,
             Path = module.Path,
             Icon = module.Icon,
-            AdminOnly = module.AdminOnly,
-            Order = module.Order
+            Order = module.Order,
+            Code = module.Code
         };
         // Respuesta estándar con success/data para facilitar el parseo en scripts
         return Ok(new { success = true, message = "Módulo creado", data = result });
@@ -93,7 +92,6 @@ public class ModulesController : ControllerBase
         module.Description = dto.Description;
         module.Path = dto.Path;
         module.Icon = dto.Icon;
-        module.AdminOnly = dto.AdminOnly;
         module.Order = dto.Order;
         module.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();

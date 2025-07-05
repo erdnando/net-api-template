@@ -149,13 +149,13 @@ public class ApplicationDbContext : DbContext
         
         // Seed Modules
         modelBuilder.Entity<Module>().HasData(
-            new Module { Id = 1, Name = "Home", Path = "/", Icon = "HomeIcon", AdminOnly = false, Order = 1, Description = "Home dashboard", Code = "HOME", IsActive = true, CreatedAt = now, IsDeleted = false },
-            new Module { Id = 2, Name = "Tasks", Path = "/tasks", Icon = "AssignmentIcon", AdminOnly = false, Order = 2, Description = "Task management", Code = "TASKS", IsActive = true, CreatedAt = now, IsDeleted = false },
-            new Module { Id = 3, Name = "Users", Path = "/users", Icon = "PeopleIcon", AdminOnly = false, Order = 3, Description = "User management", Code = "USERS", IsActive = true, CreatedAt = now, IsDeleted = false },
-            new Module { Id = 4, Name = "Roles", Path = "/roles", Icon = "SecurityIcon", AdminOnly = false, Order = 4, Description = "Role management", Code = "ROLES", IsActive = true, CreatedAt = now, IsDeleted = false },
-            new Module { Id = 5, Name = "Catalogs", Path = "/catalogs", Icon = "CategoryIcon", AdminOnly = false, Order = 5, Description = "Catalog management", Code = "CATALOGS", IsActive = true, CreatedAt = now, IsDeleted = false },
-            new Module { Id = 6, Name = "Permisos", Path = "/permissions", Icon = "AssignmentIcon", AdminOnly = false, Order = 6, Description = "Permission management", Code = "PERMISSIONS", IsActive = true, CreatedAt = now, IsDeleted = false },
-            new Module { Id = 7, Name = "Admin Utilities", Path = "/admin/utils", Icon = "SecurityIcon", AdminOnly = true, Order = 7, Description = "Admin utilities", Code = "ADMIN_UTILS", IsActive = true, CreatedAt = now, IsDeleted = false }
+            new Module { Id = 1, Name = "Home", Path = "/", Icon = "HomeIcon", Order = 1, Description = "Home dashboard", Code = "HOME", IsActive = true, CreatedAt = now, IsDeleted = false },
+            new Module { Id = 2, Name = "Tasks", Path = "/tasks", Icon = "AssignmentIcon", Order = 2, Description = "Task management", Code = "TASKS", IsActive = true, CreatedAt = now, IsDeleted = false },
+            new Module { Id = 3, Name = "Users", Path = "/users", Icon = "PeopleIcon", Order = 3, Description = "User management", Code = "USERS", IsActive = true, CreatedAt = now, IsDeleted = false },
+            new Module { Id = 4, Name = "Roles", Path = "/roles", Icon = "SecurityIcon", Order = 4, Description = "Role management", Code = "ROLES", IsActive = true, CreatedAt = now, IsDeleted = false },
+            new Module { Id = 5, Name = "Catalogs", Path = "/catalogs", Icon = "CategoryIcon", Order = 5, Description = "Catalog management", Code = "CATALOGS", IsActive = true, CreatedAt = now, IsDeleted = false },
+            new Module { Id = 6, Name = "Permisos", Path = "/permissions", Icon = "AssignmentIcon", Order = 6, Description = "Permission management", Code = "PERMISSIONS", IsActive = true, CreatedAt = now, IsDeleted = false },
+            new Module { Id = 7, Name = "Admin Utilities", Path = "/admin/utils", Icon = "SecurityIcon", Order = 7, Description = "Admin utilities", Code = "ADMIN_UTILS", IsActive = true, CreatedAt = now, IsDeleted = false }
         );
         
         // Seed Users

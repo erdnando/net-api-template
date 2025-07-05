@@ -39,8 +39,6 @@ public class Module
     [MaxLength(100)]
     public string Icon { get; set; } = string.Empty;
 
-    public bool AdminOnly { get; set; } = false;
-
     public int Order { get; set; }
 
     // Navigation properties
