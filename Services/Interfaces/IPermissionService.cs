@@ -8,8 +8,8 @@ public interface IPermissionService
     // Module Management
     Task<ApiResponse<PagedResult<ModuleDto>>> GetAllModulesAsync(PaginationQuery? query = null);
     Task<ApiResponse<ModuleDto>> GetModuleByIdAsync(int id);
-    Task<ApiResponse<ModuleDto>> CreateModuleAsync(CreateModuleDto createDto);
-    Task<ApiResponse<ModuleDto>> UpdateModuleAsync(int id, UpdateModuleDto updateDto);
+    Task<ApiResponse<ModuleDto>> CreateModuleAsync(CreatePermissionModuleDto createDto);
+    Task<ApiResponse<ModuleDto>> UpdateModuleAsync(int id, UpdatePermissionModuleDto updateDto);
     Task<ApiResponse<bool>> DeleteModuleAsync(int id);
 
     // User Permissions Management

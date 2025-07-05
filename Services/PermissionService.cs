@@ -92,7 +92,7 @@ public class PermissionService : IPermissionService
         }
     }
 
-    public async Task<ApiResponse<ModuleDto>> CreateModuleAsync(CreateModuleDto createDto)
+    public async Task<ApiResponse<ModuleDto>> CreateModuleAsync(CreatePermissionModuleDto createDto)
     {
         try
         {
@@ -122,7 +122,7 @@ public class PermissionService : IPermissionService
         }
     }
 
-    public async Task<ApiResponse<ModuleDto>> UpdateModuleAsync(int id, UpdateModuleDto updateDto)
+    public async Task<ApiResponse<ModuleDto>> UpdateModuleAsync(int id, UpdatePermissionModuleDto updateDto)
     {
         try
         {
@@ -482,12 +482,6 @@ public class PermissionService : IPermissionService
             if (permission == null)
             {
                 return new ApiResponse<bool>(false, "El usuario no tiene permisos para este módulo", false);
-            }
-
-            // Admin permission type has all permissions
-            if (permission.PermissionType == PermissionType.Admin)
-            {
-                return new ApiResponse<bool>(true, "El usuario tiene permisos de administrador para este módulo", true);
             }
 
             // Higher permission levels include lower levels (numeric comparison)

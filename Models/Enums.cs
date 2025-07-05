@@ -11,6 +11,5 @@ public enum PermissionType
     None = 0,
     Read = 10,
     Write = 20,
-    Edit = 30,
-    Admin = 40
+    Edit = 30
 }

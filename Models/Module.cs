@@ -32,6 +32,17 @@ public class Module
     // Soft delete property
     public bool IsDeleted { get; set; } = false;
 
+    [Required]
+    [MaxLength(100)]
+    public string Path { get; set; } = string.Empty;
+
+    [MaxLength(100)]
+    public string Icon { get; set; } = string.Empty;
+
+    public bool AdminOnly { get; set; } = false;
+
+    public int Order { get; set; }
+
     // Navigation properties
     public virtual ICollection<UserPermission> UserPermissions { get; set; } = new List<UserPermission>();
 }

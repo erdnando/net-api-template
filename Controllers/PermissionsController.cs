@@ -75,7 +75,7 @@ public class PermissionsController : ControllerBase
     [SwaggerOperation(Summary = "Create module", Description = "Create a new module")]
     [SwaggerResponse(201, "Module created successfully", typeof(ApiResponse<ModuleDto>))]
     [SwaggerResponse(400, "Invalid request data")]
-    public async Task<IActionResult> CreateModule([FromBody] CreateModuleDto createModuleDto)
+    public async Task<IActionResult> CreateModule([FromBody] CreatePermissionModuleDto createModuleDto)
     {
         if (!ModelState.IsValid)
         {
@@ -101,7 +101,7 @@ public class PermissionsController : ControllerBase
     [SwaggerResponse(200, "Module updated successfully", typeof(ApiResponse<ModuleDto>))]
     [SwaggerResponse(404, "Module not found")]
     [SwaggerResponse(400, "Invalid request data")]
-    public async Task<IActionResult> UpdateModule([FromRoute] int id, [FromBody] UpdateModuleDto updateModuleDto)
+    public async Task<IActionResult> UpdateModule([FromRoute] int id, [FromBody] UpdatePermissionModuleDto updateModuleDto)
     {
         if (!ModelState.IsValid)
         {

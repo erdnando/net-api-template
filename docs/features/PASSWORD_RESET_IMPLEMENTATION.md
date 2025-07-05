@@ -1,3 +1,9 @@
+# Implementación de Restablecimiento de Contraseña
+
+Detalles sobre la implementación de la funcionalidad de restablecimiento de contraseña.
+
+---
+
 # Sistema de Reset de Contraseña - Implementación Completa
 
 ## 📋 Resumen de la Implementación

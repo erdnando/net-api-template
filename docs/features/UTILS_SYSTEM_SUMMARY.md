@@ -1,3 +1,9 @@
+# Resumen del Sistema
+
+Descripción general del sistema y utilidades implementadas.
+
+---
+
 # 🛠️ Sistema de Utils/Administración - Documentación
 
 ## 📋 **Resumen**

@@ -72,13 +72,14 @@ public class ModuleDto
     }
 }
 
-public record CreateModuleDto(
+public record CreatePermissionModuleDto(
     [Required][StringLength(100)] string Name,
     [StringLength(255)] string? Description,
-    [Required][StringLength(100)] string Code
+    [Required][StringLength(100)] string Code,
+    bool? IsActive
 );
 
-public record UpdateModuleDto(
+public record UpdatePermissionModuleDto(
     [StringLength(100)] string? Name,
     [StringLength(255)] string? Description,
     [StringLength(100)] string? Code,
