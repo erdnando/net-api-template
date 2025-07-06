@@ -615,13 +615,37 @@ public class PermissionService : IPermissionService
 
             foreach (var permissionDto in permissions)
             {
-                var permission = await _context.UserPermissions
-                    .FirstOrDefaultAsync(p => p.Id == permissionDto.Id && p.UserId == userId);
-
-                if (permission != null)
+                if (permissionDto.Id == 0)
                 {
-                    permission.PermissionType = permissionDto.PermissionType;
-                    permission.UpdatedAt = DateTime.UtcNow;
+                    // Buscar si ya existe un permiso para ese usuario y módulo
+                    var existing = await _context.UserPermissions.FirstOrDefaultAsync(p => p.UserId == userId && p.ModuleId == permissionDto.ModuleId);
+                    if (existing == null)
+                    {
+                        var newPermission = new UserPermission
+                        {
+                            UserId = userId,
+                            ModuleId = permissionDto.ModuleId,
+                            PermissionType = permissionDto.PermissionType,
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        _context.UserPermissions.Add(newPermission);
+                    }
+                    else
+                    {
+                        // Si ya existe, actualiza el tipo de permiso
+                        existing.PermissionType = permissionDto.PermissionType;
+                        existing.UpdatedAt = DateTime.UtcNow;
+                    }
+                }
+                else
+                {
+                    var permission = await _context.UserPermissions
+                        .FirstOrDefaultAsync(p => p.Id == permissionDto.Id && p.UserId == userId);
+                    if (permission != null)
+                    {
+                        permission.PermissionType = permissionDto.PermissionType;
+                        permission.UpdatedAt = DateTime.UtcNow;
+                    }
                 }
             }
 

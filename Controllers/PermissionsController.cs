@@ -166,7 +166,7 @@ public class PermissionsController : ControllerBase
     /// Update user permissions
     /// </summary>
     [HttpPut("users/{userId}")]
-    [SwaggerOperation(Summary = "Update user permissions", Description = "Update all permissions for a specific user")]
+    [SwaggerOperation(Summary = "Update user permissions", Description = "Update all permissions for a specific user. To create a new permission, send Id=0 and provide ModuleId and PermissionType.")]
     [SwaggerResponse(200, "User permissions updated successfully", typeof(ApiResponse<bool>))]
     [SwaggerResponse(404, "User not found")]
     [SwaggerResponse(400, "Invalid request data")]

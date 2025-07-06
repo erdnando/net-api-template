@@ -50,34 +50,19 @@ public class UtilsController : ControllerBase
     {
         try
         {
-            // Obtener email del admin autenticado
-            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(adminEmail))
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userEmail))
             {
-                return Unauthorized(new { message = "No se pudo identificar al usuario administrador" });
+                return Unauthorized(new { message = "No se pudo identificar al usuario" });
             }
-
-            // Verificar si es administrador
-            var isAdmin = await _utilsService.IsAdminUserAsync(adminEmail);
-            if (!isAdmin)
-            {
-                _logger.LogWarning("User {Email} attempted to reset password attempts without admin privileges", adminEmail);
-                return StatusCode(403, new { message = "Solo los administradores pueden realizar esta acción" });
-            }
-
-            // Obtener IP del cliente
             var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
-
-            // Ejecutar reset
-            var result = await _utilsService.ResetPasswordAttemptsAsync(request.Email, adminEmail, clientIp);
-
+            var result = await _utilsService.ResetPasswordAttemptsAsync(request.Email, userEmail, clientIp);
             if (result.Success)
             {
-                _logger.LogInformation("Password reset attempts cleared for user {TargetEmail} by admin {AdminEmail}", 
-                    request.Email, adminEmail);
+                _logger.LogInformation("Password reset attempts cleared for user {TargetEmail} by user {UserEmail}", 
+                    request.Email, userEmail);
                 return Ok(result);
             }
-
             return NotFound(result);
         }
         catch (Exception ex)
@@ -103,18 +88,11 @@ public class UtilsController : ControllerBase
     {
         try
         {
-            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(adminEmail))
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userEmail))
             {
                 return Unauthorized();
             }
-
-            var isAdmin = await _utilsService.IsAdminUserAsync(adminEmail);
-            if (!isAdmin)
-            {
-                return StatusCode(403, new { message = "Solo los administradores pueden acceder a estas estadísticas" });
-            }
-
             var stats = await _utilsService.GetPasswordResetStatsAsync();
             return Ok(stats);
         }
@@ -141,21 +119,13 @@ public class UtilsController : ControllerBase
     {
         try
         {
-            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(adminEmail))
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userEmail))
             {
                 return Unauthorized();
             }
-
-            var isAdmin = await _utilsService.IsAdminUserAsync(adminEmail);
-            if (!isAdmin)
-            {
-                return StatusCode(403, new { message = "Solo los administradores pueden realizar esta acción" });
-            }
-
             var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
-            var result = await _utilsService.CleanupExpiredTokensAsync(adminEmail, clientIp);
-
+            var result = await _utilsService.CleanupExpiredTokensAsync(userEmail, clientIp);
             return Ok(result);
         }
         catch (Exception ex)
@@ -185,18 +155,11 @@ public class UtilsController : ControllerBase
     {
         try
         {
-            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(adminEmail))
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userEmail))
             {
                 return Unauthorized();
             }
-
-            var isAdmin = await _utilsService.IsAdminUserAsync(adminEmail);
-            if (!isAdmin)
-            {
-                return StatusCode(403, new { message = "Solo los administradores pueden acceder a la configuración" });
-            }
-
             var config = await _utilsService.GetSystemConfigAsync();
             return Ok(config);
         }
@@ -223,18 +186,11 @@ public class UtilsController : ControllerBase
     {
         try
         {
-            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(adminEmail))
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userEmail))
             {
                 return Unauthorized();
             }
-
-            var isAdmin = await _utilsService.IsAdminUserAsync(adminEmail);
-            if (!isAdmin)
-            {
-                return StatusCode(403, new { message = "Solo los administradores pueden acceder al estado del sistema" });
-            }
-
             var health = await _utilsService.GetSystemHealthAsync();
             return Ok(health);
         }
@@ -266,20 +222,12 @@ public class UtilsController : ControllerBase
     {
         try
         {
-            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(adminEmail))
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userEmail))
             {
                 return Unauthorized();
             }
-
-            var isAdmin = await _utilsService.IsAdminUserAsync(adminEmail);
-            if (!isAdmin)
-            {
-                return StatusCode(403, new { message = "Solo los administradores pueden verificar usuarios" });
-            }
-
             var exists = await _utilsService.UserExistsAsync(email);
-
             return Ok(new UtilsOperationResponseDto
             {
                 Success = true,
@@ -317,26 +265,16 @@ public class UtilsController : ControllerBase
     {
         try
         {
-            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(adminEmail))
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userEmail))
             {
                 return Unauthorized();
             }
-
-            var isAdmin = await _utilsService.IsAdminUserAsync(adminEmail);
-            if (!isAdmin)
-            {
-                return StatusCode(403, new { message = "Solo los administradores pueden buscar usuarios" });
-            }
-
-            // Validar parámetros de entrada
             if (string.IsNullOrWhiteSpace(email) || email.Length < 2)
             {
                 return BadRequest(new { message = "El email debe tener al menos 2 caracteres" });
             }
-
             var users = await _utilsService.SearchUsersByEmailAsync(email);
-
             return Ok(new UtilsSearchUsersResponseDto
             {
                 Success = true,

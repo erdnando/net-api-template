@@ -35,6 +35,7 @@ public record CreateUserPermissionDto(
 
 public record UpdateUserPermissionDto(
     int Id,
+    [Required] int ModuleId,
     [Required] PermissionType PermissionType
 );
 

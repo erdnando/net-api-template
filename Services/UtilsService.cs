@@ -63,7 +63,7 @@ public class UtilsService : IUtilsService
             }
 
             // Log de auditoría
-            await LogSecurityAuditAsync(new SecurityAuditLogDto
+            LogSecurityAudit(new SecurityAuditLogDto
             {
                 Action = "PASSWORD_RESET_ATTEMPTS_RESET",
                 Description = $"Admin reset password attempts for user: {email}",
@@ -180,7 +180,7 @@ public class UtilsService : IUtilsService
             }
 
             // Log de auditoría
-            await LogSecurityAuditAsync(new SecurityAuditLogDto
+            LogSecurityAudit(new SecurityAuditLogDto
             {
                 Action = "EXPIRED_TOKENS_CLEANUP",
                 Description = $"Admin cleaned up {tokenCount} expired password reset tokens",
@@ -219,16 +219,14 @@ public class UtilsService : IUtilsService
     // 🛡️ Auditoría y Seguridad
     // ========================================
 
-    public async Task<bool> LogSecurityAuditAsync(SecurityAuditLogDto auditLog)
+    public bool LogSecurityAudit(SecurityAuditLogDto auditLog)
     {
         try
         {
             _logger.LogInformation("Security Audit: {Action} - {Description} - Admin: {AdminEmail} - IP: {ClientIp}", 
                 auditLog.Action, auditLog.Description, auditLog.AdminEmail, auditLog.ClientIp);
-            
             // Aquí podrías guardar en una tabla específica de auditoría si la tienes
             // Por ahora, se registra en logs
-            
             return true;
         }
         catch (Exception ex)
@@ -330,17 +328,5 @@ public class UtilsService : IUtilsService
             _logger.LogError(ex, "Error searching users by email: {PartialEmail}", partialEmail);
             return Array.Empty<string>();
         }
-    }
-
-    public async Task<bool> IsAdminUserAsync(string email)
-    {
-        // Esta implementación depende de cómo tengas configurados los roles
-        var user = await _context.Users
-            .Include(u => u.Role)
-            .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
-
-        // Verificar si el rol es "Administrador" o "admin" (case insensitive)
-        var roleName = user?.Role?.Name?.ToLower();
-        return roleName == "administrador" || roleName == "admin";
     }
 }

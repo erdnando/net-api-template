@@ -39,13 +39,6 @@ public interface IUtilsService
     // ========================================
     
     /// <summary>
-    /// Registra una acción administrativa en el log de seguridad
-    /// </summary>
-    /// <param name="auditLog">Datos del log de auditoría</param>
-    /// <returns>True si se registró correctamente</returns>
-    Task<bool> LogSecurityAuditAsync(SecurityAuditLogDto auditLog);
-
-    /// <summary>
     /// Obtiene logs de seguridad recientes
     /// </summary>
     /// <param name="hours">Horas hacia atrás a consultar</param>
@@ -88,9 +81,9 @@ public interface IUtilsService
     Task<string[]> SearchUsersByEmailAsync(string partialEmail);
 
     /// <summary>
-    /// Valida si un usuario tiene permisos de administrador
+    /// Registra una acción administrativa en el log de seguridad
     /// </summary>
-    /// <param name="email">Email del usuario</param>
-    /// <returns>True si es administrador</returns>
-    Task<bool> IsAdminUserAsync(string email);
+    /// <param name="auditLog">Datos del log de auditoría</param>
+    /// <returns>True si se registró correctamente</returns>
+    bool LogSecurityAudit(SecurityAuditLogDto auditLog);
 }
