@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace netapi_template.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateWithCorrectAdmin : Migration
+    public partial class UserPermissionSeed_Final : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,7 +58,12 @@ namespace netapi_template.Migrations
                     IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Path = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Icon = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Order = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -124,6 +129,31 @@ namespace netapi_template.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "PasswordResetTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Token = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UsedAt = table.Column<DateTime>(type: "datetime", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PasswordResetTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PasswordResetTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Tasks",
                 columns: table => new
                 {
@@ -160,8 +190,7 @@ namespace netapi_template.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ModuleId = table.Column<int>(type: "int", nullable: false),
-                    PermissionType = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PermissionType = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
@@ -188,20 +217,22 @@ namespace netapi_template.Migrations
                 columns: new[] { "Id", "Category", "CreatedAt", "Description", "Image", "InStock", "Price", "Rating", "Title", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, "Electronics", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "High-quality wireless headphones with noise cancellation", null, true, 299.99m, 4.5m, "Premium Headphones", new DateTime(2025, 6, 29, 1, 23, 51, 660, DateTimeKind.Utc).AddTicks(3725) },
-                    { 2, "Electronics", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "High-performance laptop for gaming and professional work", null, true, 1299.99m, 4.8m, "Gaming Laptop", new DateTime(2025, 6, 29, 1, 23, 51, 660, DateTimeKind.Utc).AddTicks(4658) }
+                    { 1, "Electronics", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "High-quality wireless headphones with noise cancellation", null, true, 299.99m, 4.5m, "Premium Headphones", new DateTime(2025, 7, 7, 22, 37, 58, 327, DateTimeKind.Utc).AddTicks(9706) },
+                    { 2, "Electronics", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "High-performance laptop for gaming and professional work", null, true, 1299.99m, 4.8m, "Gaming Laptop", new DateTime(2025, 7, 7, 22, 37, 58, 328, DateTimeKind.Utc).AddTicks(1376) }
                 });
 
             migrationBuilder.InsertData(
                 table: "Modules",
-                columns: new[] { "Id", "Code", "CreatedAt", "Description", "IsActive", "IsDeleted", "Name", "UpdatedAt" },
+                columns: new[] { "Id", "Code", "CreatedAt", "Description", "Icon", "IsActive", "IsDeleted", "Name", "Order", "Path", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, "HOME", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Home dashboard", true, false, "Home", null },
-                    { 2, "TASKS", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Task management", true, false, "Tasks", null },
-                    { 3, "USERS", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "User management", true, false, "Users", null },
-                    { 4, "CATALOGS", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Catalog management", true, false, "Catalogs", null },
-                    { 5, "PERMISSIONS", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Permission management", true, false, "Permissions", null }
+                    { 1, "HOME", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Home dashboard", "HomeIcon", true, false, "Home", 1, "/", null },
+                    { 2, "TASKS", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Task management", "AssignmentIcon", true, false, "Tasks", 2, "/tasks", null },
+                    { 3, "USERS", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "User management", "PeopleIcon", true, false, "Users", 3, "/users", null },
+                    { 4, "ROLES", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Role management", "SecurityIcon", true, false, "Roles", 4, "/roles", null },
+                    { 5, "CATALOGS", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Catalog management", "CategoryIcon", true, false, "Catalogs", 5, "/catalogs", null },
+                    { 6, "PERMISSIONS", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Permission management", "AssignmentIcon", true, false, "Permisos", 6, "/permissions", null },
+                    { 7, "ADMIN_UTILS", new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Admin utilities", "SecurityIcon", true, false, "Admin Utilities", 7, "/admin/utils", null }
                 });
 
             migrationBuilder.InsertData(
@@ -221,8 +252,8 @@ namespace netapi_template.Migrations
                 columns: new[] { "Id", "Avatar", "CreatedAt", "Email", "FirstName", "IsDeleted", "LastLoginAt", "LastName", "PasswordHash", "RoleId", "Status", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, null, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@sistema.com", "Admin", false, null, "sistema", "$2a$11$9cfW8xzSFDEmAGmYoNxOAe73u8HvqRVmgDHTP/oGUtTz/sMSX/q9S", 1, "Active", null },
-                    { 2, null, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "erdnando@gmail.com", "Erdnando", false, null, "User", "$2a$11$rxWGfQ7PB/z45EzEX2C.1ecOYjN1Z7StOcN3Va0RVQU3mDpqwOUrS", 3, "Active", null }
+                    { 1, null, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@sistema.com", "Admin", false, null, "sistema", "$2a$11$cV8dxl/nAg40pP1YcIaoau5s7L3WAK1kUigNNJjRCJ93JHm05e71K", 1, "Active", null },
+                    { 2, null, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "erdnando@gmail.com", "Erdnando", false, null, "User", "$2a$11$F8dPpwfecyNKVAz86iaDVOYeHJQPmOpaYHbY1yrvHsYBnafWzRvBe", 3, "Active", null }
                 });
 
             migrationBuilder.InsertData(
@@ -230,16 +261,20 @@ namespace netapi_template.Migrations
                 columns: new[] { "Id", "CreatedAt", "ModuleId", "PermissionType", "UpdatedAt", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Admin", null, 1 },
-                    { 2, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, "Admin", null, 1 },
-                    { 3, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, "Admin", null, 1 },
-                    { 4, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 4, "Admin", null, 1 },
-                    { 5, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 5, "Admin", null, 1 },
-                    { 6, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Read", null, 2 },
-                    { 7, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, "Edit", null, 2 },
-                    { 8, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, "Read", null, 2 },
-                    { 9, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 4, "Write", null, 2 },
-                    { 10, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 5, "None", null, 2 }
+                    { 6, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 20, null, 2 },
+                    { 7, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, 20, null, 2 },
+                    { 8, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, 0, null, 2 },
+                    { 9, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 4, 0, null, 2 },
+                    { 10, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 5, 20, null, 2 },
+                    { 11, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 6, 0, null, 2 },
+                    { 12, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 7, 0, null, 2 },
+                    { 13, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 20, null, 1 },
+                    { 14, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, 0, null, 1 },
+                    { 15, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, 20, null, 1 },
+                    { 16, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 4, 20, null, 1 },
+                    { 17, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 5, 0, null, 1 },
+                    { 18, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 6, 20, null, 1 },
+                    { 19, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 7, 20, null, 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -247,6 +282,17 @@ namespace netapi_template.Migrations
                 table: "Modules",
                 column: "Code",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PasswordResetTokens_Token",
+                table: "PasswordResetTokens",
+                column: "Token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PasswordResetTokens_UserId",
+                table: "PasswordResetTokens",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Roles_Name",
@@ -287,6 +333,9 @@ namespace netapi_template.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Catalogs");
+
+            migrationBuilder.DropTable(
+                name: "PasswordResetTokens");
 
             migrationBuilder.DropTable(
                 name: "Tasks");

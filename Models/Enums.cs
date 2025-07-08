@@ -6,10 +6,10 @@ public enum UserStatus
     Inactive
 }
 
-public enum PermissionType
-{
-    None = 0,
-    Read = 10,
-    Write = 20,
-    Edit = 30
-}
+// public enum PermissionType
+// {
+//     None = 0,
+//     Read = 10,
+//     Write = 20,
+//     Edit = 30
+// }

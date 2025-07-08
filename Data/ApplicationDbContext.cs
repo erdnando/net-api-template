@@ -91,8 +91,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
             
             // Enum configuration
-            entity.Property(e => e.PermissionType)
-                .HasConversion<string>();
+            // entity.Property(e => e.PermissionType)
+            //     .HasConversion<string>();
             
             // Relationships
             entity.HasOne(e => e.User)
@@ -144,7 +144,7 @@ public class ApplicationDbContext : DbContext
             new Role { Id = 3, Name = "Analista", Description = "Analyst role", IsSystemRole = false, CreatedAt = now, IsDeleted = false },
             new Role { Id = 4, Name = "Reportes", Description = "Reports role", IsSystemRole = false, CreatedAt = now, IsDeleted = false },
             new Role { Id = 5, Name = "Soporte", Description = "Support role", IsSystemRole = false, CreatedAt = now, IsDeleted = false }
-//          new Role { Id = 6, Name = "Invitado", Description = "Guest role", IsSystemRole = false, CreatedAt = now, IsDeleted = false }
+
         );
         
         // Seed Modules
@@ -154,7 +154,7 @@ public class ApplicationDbContext : DbContext
             new Module { Id = 3, Name = "Users", Path = "/users", Icon = "PeopleIcon", Order = 3, Description = "User management", Code = "USERS", IsActive = true, CreatedAt = now, IsDeleted = false },
             new Module { Id = 4, Name = "Roles", Path = "/roles", Icon = "SecurityIcon", Order = 4, Description = "Role management", Code = "ROLES", IsActive = true, CreatedAt = now, IsDeleted = false },
             new Module { Id = 5, Name = "Catalogs", Path = "/catalogs", Icon = "CategoryIcon", Order = 5, Description = "Catalog management", Code = "CATALOGS", IsActive = true, CreatedAt = now, IsDeleted = false },
-            new Module { Id = 6, Name = "Permisos", Path = "/permissions", Icon = "AssignmentIcon", Order = 6, Description = "Permission management", Code = "PERMISSIONS", IsActive = true, CreatedAt = now, IsDeleted = false },
+            new Module { Id = 6, Name = "Permisos", Path = "/permissions", Icon = "CategoryIcon", Order = 6, Description = "Permission management", Code = "PERMISSIONS", IsActive = true, CreatedAt = now, IsDeleted = false },
             new Module { Id = 7, Name = "Admin Utilities", Path = "/admin/utils", Icon = "SecurityIcon", Order = 7, Description = "Admin utilities", Code = "ADMIN_UTILS", IsActive = true, CreatedAt = now, IsDeleted = false }
         );
         
@@ -188,12 +188,22 @@ public class ApplicationDbContext : DbContext
         
         // Seed User Permissions
         modelBuilder.Entity<UserPermission>().HasData(
-            // Standard permissions for Erdnando
-            new UserPermission { Id = 6, UserId = 2, ModuleId = 1, PermissionType = PermissionType.Read, CreatedAt = now },
-            new UserPermission { Id = 7, UserId = 2, ModuleId = 2, PermissionType = PermissionType.Edit, CreatedAt = now },
-            new UserPermission { Id = 8, UserId = 2, ModuleId = 3, PermissionType = PermissionType.Read, CreatedAt = now },
-            new UserPermission { Id = 9, UserId = 2, ModuleId = 4, PermissionType = PermissionType.Write, CreatedAt = now },
-            new UserPermission { Id = 10, UserId = 2, ModuleId = 5, PermissionType = PermissionType.None, CreatedAt = now }
+            //erdnando@gmail.com
+            new UserPermission { Id = 6, UserId = 2, ModuleId = 1, PermissionType = 20, CreatedAt = now }, // Home - Write
+            new UserPermission { Id = 7, UserId = 2, ModuleId = 2, PermissionType = 20, CreatedAt = now }, // Tasks - Write
+            new UserPermission { Id = 8, UserId = 2, ModuleId = 3, PermissionType = 0, CreatedAt = now },  // Users - None
+            new UserPermission { Id = 9, UserId = 2, ModuleId = 4, PermissionType = 0, CreatedAt = now },  // Roles - None
+            new UserPermission { Id = 10, UserId = 2, ModuleId = 5, PermissionType = 20, CreatedAt = now },  // Catalogs - Write
+            new UserPermission { Id = 11, UserId = 2, ModuleId = 6, PermissionType = 0, CreatedAt = now },  // Permisos - None
+            new UserPermission { Id = 12, UserId = 2, ModuleId = 7, PermissionType = 0, CreatedAt = now },  // Admin utilities - None
+            //admin@sistema.com
+            new UserPermission { Id = 13, UserId = 1, ModuleId = 1, PermissionType = 20, CreatedAt = now }, // Home - Write
+            new UserPermission { Id = 14, UserId = 1, ModuleId = 2, PermissionType = 0, CreatedAt = now }, // Tasks - None
+            new UserPermission { Id = 15, UserId = 1, ModuleId = 3, PermissionType = 20, CreatedAt = now },  // Users - Write
+            new UserPermission { Id = 16, UserId = 1, ModuleId = 4, PermissionType = 20, CreatedAt = now },  // Roles - Write
+            new UserPermission { Id = 17, UserId = 1, ModuleId = 5, PermissionType = 0, CreatedAt = now },  // Catalogs - None
+            new UserPermission { Id = 18, UserId = 1, ModuleId = 6, PermissionType = 20, CreatedAt = now },  // Permisos - Write
+            new UserPermission { Id = 19, UserId = 1, ModuleId = 7, PermissionType = 20, CreatedAt = now }  // Admin utilities - Write
         );
         
         // Seed Catalogs (existing)

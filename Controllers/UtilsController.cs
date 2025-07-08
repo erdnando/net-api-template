@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using netapi_template.Attributes;
 using netapi_template.DTOs;
+using netapi_template.Models;
 using netapi_template.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;

@@ -79,7 +79,7 @@ namespace netapi_template.Migrations
                             Price = 299.99m,
                             Rating = 4.5m,
                             Title = "Premium Headphones",
-                            UpdatedAt = new DateTime(2025, 7, 5, 17, 37, 16, 232, DateTimeKind.Utc).AddTicks(5363)
+                            UpdatedAt = new DateTime(2025, 7, 7, 22, 37, 58, 327, DateTimeKind.Utc).AddTicks(9706)
                         },
                         new
                         {
@@ -91,7 +91,7 @@ namespace netapi_template.Migrations
                             Price = 1299.99m,
                             Rating = 4.8m,
                             Title = "Gaming Laptop",
-                            UpdatedAt = new DateTime(2025, 7, 5, 17, 37, 16, 232, DateTimeKind.Utc).AddTicks(6287)
+                            UpdatedAt = new DateTime(2025, 7, 7, 22, 37, 58, 328, DateTimeKind.Utc).AddTicks(1376)
                         });
                 });
 
@@ -473,7 +473,7 @@ namespace netapi_template.Migrations
                             FirstName = "Admin",
                             IsDeleted = false,
                             LastName = "sistema",
-                            PasswordHash = "$2a$11$sts3YE1YhypcLxRe0jhoGuBuloOrwrUo0MOsBOjMIcFOnrQ9UPIJG",
+                            PasswordHash = "$2a$11$cV8dxl/nAg40pP1YcIaoau5s7L3WAK1kUigNNJjRCJ93JHm05e71K",
                             RoleId = 1,
                             Status = "Active"
                         },
@@ -485,7 +485,7 @@ namespace netapi_template.Migrations
                             FirstName = "Erdnando",
                             IsDeleted = false,
                             LastName = "User",
-                            PasswordHash = "$2a$11$Y2dlWM3L6WpG58AAvDLl0.RU/wLH4aYmXuexaZI7YYr33obRTeBva",
+                            PasswordHash = "$2a$11$F8dPpwfecyNKVAz86iaDVOYeHJQPmOpaYHbY1yrvHsYBnafWzRvBe",
                             RoleId = 3,
                             Status = "Active"
                         });
@@ -505,9 +505,8 @@ namespace netapi_template.Migrations
                     b.Property<int>("ModuleId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PermissionType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<int>("PermissionType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime");
@@ -530,7 +529,7 @@ namespace netapi_template.Migrations
                             Id = 6,
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModuleId = 1,
-                            PermissionType = "Read",
+                            PermissionType = 20,
                             UserId = 2
                         },
                         new
@@ -538,7 +537,7 @@ namespace netapi_template.Migrations
                             Id = 7,
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModuleId = 2,
-                            PermissionType = "Edit",
+                            PermissionType = 20,
                             UserId = 2
                         },
                         new
@@ -546,7 +545,7 @@ namespace netapi_template.Migrations
                             Id = 8,
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModuleId = 3,
-                            PermissionType = "Read",
+                            PermissionType = 0,
                             UserId = 2
                         },
                         new
@@ -554,7 +553,7 @@ namespace netapi_template.Migrations
                             Id = 9,
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModuleId = 4,
-                            PermissionType = "Write",
+                            PermissionType = 0,
                             UserId = 2
                         },
                         new
@@ -562,8 +561,80 @@ namespace netapi_template.Migrations
                             Id = 10,
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModuleId = 5,
-                            PermissionType = "None",
+                            PermissionType = 20,
                             UserId = 2
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 6,
+                            PermissionType = 0,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 7,
+                            PermissionType = 0,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 1,
+                            PermissionType = 20,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 2,
+                            PermissionType = 0,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 3,
+                            PermissionType = 20,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 4,
+                            PermissionType = 20,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 5,
+                            PermissionType = 0,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 6,
+                            PermissionType = 20,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 7,
+                            PermissionType = 20,
+                            UserId = 1
                         });
                 });
 

@@ -276,18 +276,28 @@ public class UserService : IUserService
         
         try
         {
+            _logger.LogInformation("Login attempt for {Email} from {Ip} using {UserAgent}", loginDto.Email, ipAddress, userAgent);
             var user = await _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+            if (user == null)
             {
+                _logger.LogWarning("Login failed: user not found for {Email}", loginDto.Email);
+                _securityLogger.LogFailedLogin(loginDto.Email, ipAddress, userAgent);
+                return new ApiResponse<LoginResponseDto>(false, "Credenciales inválidas");
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+            {
+                _logger.LogWarning("Login failed: invalid password for {Email}", loginDto.Email);
                 _securityLogger.LogFailedLogin(loginDto.Email, ipAddress, userAgent);
                 return new ApiResponse<LoginResponseDto>(false, "Credenciales inválidas");
             }
 
             if (user.Status != UserStatus.Active)
             {
+                _logger.LogWarning("Login failed: user {Email} is inactive", loginDto.Email);
                 _securityLogger.LogFailedLogin(loginDto.Email, ipAddress, userAgent);
                 _securityLogger.LogSuspiciousActivity(loginDto.Email, "Login attempt with inactive account", ipAddress);
                 return new ApiResponse<LoginResponseDto>(false, "Usuario inactivo");
@@ -301,6 +311,7 @@ public class UserService : IUserService
 
             var response = new LoginResponseDto(token, userDto);
 
+            _logger.LogInformation("Login successful for {Email}", user.Email);
             _securityLogger.LogSuccessfulLogin(user.Email, ipAddress, userAgent);
             return new ApiResponse<LoginResponseDto>(true, "Login exitoso", response);
         }

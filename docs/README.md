@@ -21,6 +21,9 @@
 - [Guía de Deployment](./deployment/DEPLOYMENT.md)
 
 ## 📋 **Reportes y Resoluciones**
+- [Agente Inteligente con Telemetría](./reports/TELEMETRY_ML_REALTIME_ANALYSIS.md) (Análisis completo del agente inteligente y componentes de soporte)
+- [Arquitectura del Agente Inteligente](./deployment/TELEMETRY_ARCHITECTURE.md) (Diagrama visual y alternativas)
+- [Azure Functions Migration Analysis](./reports/AZURE_FUNCTIONS_MIGRATION_ANALYSIS.md)
 - [Issues Resolved](./reports/ISSUES_RESOLVED.md)
 - [Investigation Results](./reports/INVESTIGATION_RESULTS.md)
 - [Frontend URL Fix Report](./reports/FRONTEND_URL_FIX_REPORT.md)

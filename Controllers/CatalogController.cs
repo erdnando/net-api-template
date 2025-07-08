@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using netapi_template.DTOs;
 using netapi_template.Services.Interfaces;
+using netapi_template.Attributes;
+using netapi_template.Models;
 
 namespace netapi_template.Controllers;
 
@@ -60,8 +62,6 @@ public class CatalogController : BaseController
     /// <response code="400">Error en la petición</response>
     [Authorize]
     [HttpGet("category/{category}")]
-    [ProducesResponseType(typeof(ApiResponse<IEnumerable<CatalogDto>>), 200)]
-    [ProducesResponseType(400)]
     public async Task<IActionResult> GetCatalogsByCategory([FromRoute] string category)
     {
         var response = await _catalogService.GetByCategoryAsync(category);
@@ -77,8 +77,6 @@ public class CatalogController : BaseController
     /// <response code="400">Error en la petición</response>
     [Authorize]
     [HttpGet("type/{type}")]
-    [ProducesResponseType(typeof(ApiResponse<IEnumerable<CatalogDto>>), 200)]
-    [ProducesResponseType(400)]
     public async Task<IActionResult> GetCatalogsByType([FromRoute] string type)
     {
         var response = await _catalogService.GetCatalogsByTypeAsync(type);
@@ -93,8 +91,6 @@ public class CatalogController : BaseController
     /// <response code="400">Error en la petición</response>
     [Authorize]
     [HttpGet("active")]
-    [ProducesResponseType(typeof(ApiResponse<IEnumerable<CatalogDto>>), 200)]
-    [ProducesResponseType(400)]
     public async Task<IActionResult> GetActiveCatalogs()
     {
         var response = await _catalogService.GetActiveCatalogsAsync();
@@ -109,8 +105,6 @@ public class CatalogController : BaseController
     /// <response code="400">Error en la petición</response>
     [Authorize]
     [HttpGet("in-stock")]
-    [ProducesResponseType(typeof(ApiResponse<IEnumerable<CatalogDto>>), 200)]
-    [ProducesResponseType(400)]
     public async Task<IActionResult> GetInStockCatalogs()
     {
         var response = await _catalogService.GetInStockItemsAsync();
@@ -126,8 +120,6 @@ public class CatalogController : BaseController
     /// <response code="400">Error en los datos proporcionados</response>
     [Authorize]
     [HttpPost]
-    [ProducesResponseType(typeof(ApiResponse<CatalogDto>), 200)]
-    [ProducesResponseType(400)]
     public async Task<IActionResult> CreateCatalog([FromBody] CreateCatalogDto createCatalogDto)
     {
         if (!ModelState.IsValid)
@@ -149,8 +141,6 @@ public class CatalogController : BaseController
     /// <response code="400">Error en los datos o catálogo no encontrado</response>
     [Authorize]
     [HttpPut("{id}")]
-    [ProducesResponseType(typeof(ApiResponse<CatalogDto>), 200)]
-    [ProducesResponseType(400)]
     public async Task<IActionResult> UpdateCatalog([FromRoute] int id, [FromBody] UpdateCatalogDto updateCatalogDto)
     {
         if (!ModelState.IsValid)
@@ -171,8 +161,6 @@ public class CatalogController : BaseController
     /// <response code="400">Catálogo no encontrado</response>
     [Authorize]
     [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
-    [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteCatalog([FromRoute] int id)
     {
         var response = await _catalogService.DeleteCatalogAsync(id);
@@ -189,8 +177,6 @@ public class CatalogController : BaseController
     /// <response code="400">Catálogo no encontrado</response>
     [Authorize]
     [HttpPatch("{id}/status")]
-    [ProducesResponseType(typeof(ApiResponse<CatalogDto>), 200)]
-    [ProducesResponseType(400)]
     public async Task<IActionResult> ToggleCatalogStatus([FromRoute] int id, [FromBody] bool isActive)
     {
         var response = await _catalogService.ToggleCatalogStatusAsync(id, isActive);

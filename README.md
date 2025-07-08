@@ -18,6 +18,8 @@ Toda la documentación técnica y funcional se encuentra en la carpeta [`docs`](
 - [PASSWORD_RESET_IMPLEMENTATION.md](./docs/features/PASSWORD_RESET_IMPLEMENTATION.md): Detalles técnicos y de seguridad del sistema de recuperación de contraseñas.
 
 #### 📂 reports
+- [TELEMETRY_ML_REALTIME_ANALYSIS.md](./docs/reports/TELEMETRY_ML_REALTIME_ANALYSIS.md): Análisis completo sobre la implementación de telemetría, alertas, reportes en tiempo real, ML y feeds en tiempo real.
+- [AZURE_FUNCTIONS_MIGRATION_ANALYSIS.md](./docs/reports/AZURE_FUNCTIONS_MIGRATION_ANALYSIS.md): Análisis detallado sobre la viabilidad, pros/contras y recomendaciones para la migración de la API a Azure Functions.
 - [APPSETTINGS_CLEANUP_REPORT.md](./docs/reports/APPSETTINGS_CLEANUP_REPORT.md): Reporte de limpieza y optimización de archivos de configuración.
 - [TEST_CLEANUP_REPORT.md](./docs/reports/TEST_CLEANUP_REPORT.md): Acciones y resultados de la limpieza y mejora de pruebas automáticas.
 - [INVESTIGATION_RESULTS.md](./docs/reports/INVESTIGATION_RESULTS.md): Hallazgos y análisis de problemas o mejoras realizadas.

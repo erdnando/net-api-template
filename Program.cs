@@ -64,6 +64,7 @@ builder.Services.AddScoped<ISecurityLoggerService, SecurityLoggerService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 builder.Services.AddScoped<IUtilsService, UtilsService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 // Register repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -73,7 +74,6 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Register services
 builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ICatalogService, CatalogService>();
 

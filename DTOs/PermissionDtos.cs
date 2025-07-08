@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using netapi_template.Models;
 
 namespace netapi_template.DTOs;
 
@@ -10,12 +9,12 @@ public class UserPermissionDto
     public int ModuleId { get; set; }
     public string ModuleName { get; set; } = string.Empty;
     public string ModuleCode { get; set; } = string.Empty;
-    public PermissionType PermissionType { get; set; }
+    public int PermissionType { get; set; } // Usar int para compatibilidad
     public DateTime CreatedAt { get; set; }
     
     public UserPermissionDto() { }
     
-    public UserPermissionDto(int id, int userId, int moduleId, string moduleName, string moduleCode, PermissionType permissionType, DateTime createdAt)
+    public UserPermissionDto(int id, int userId, int moduleId, string moduleName, string moduleCode, int permissionType, DateTime createdAt)
     {
         Id = id;
         UserId = userId;
@@ -30,13 +29,13 @@ public class UserPermissionDto
 public record CreateUserPermissionDto(
     [Required] int UserId,
     [Required] int ModuleId,
-    [Required] PermissionType PermissionType
+    [Required] int PermissionType
 );
 
 public record UpdateUserPermissionDto(
     int Id,
     [Required] int ModuleId,
-    [Required] PermissionType PermissionType
+    [Required] int PermissionType
 );
 
 public record UpdateUserPermissionsDto(
@@ -46,7 +45,7 @@ public record UpdateUserPermissionsDto(
 
 public record ModulePermissionDto(
     [Required] int ModuleId,
-    [Required] PermissionType PermissionType
+    [Required] int PermissionType
 );
 
 public class ModuleDto

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using netapi_template.DTOs;
 using netapi_template.Services.Interfaces;
+using netapi_template.Attributes;
+using netapi_template.Models;
 
 namespace netapi_template.Controllers;
 

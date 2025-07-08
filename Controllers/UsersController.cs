@@ -5,6 +5,8 @@ using netapi_template.Services.Interfaces;
 using netapi_template.Services;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
+using netapi_template.Attributes;
+using netapi_template.Models;
 
 namespace netapi_template.Controllers;
 

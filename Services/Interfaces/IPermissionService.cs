@@ -1,32 +1,24 @@
 using netapi_template.DTOs;
-using netapi_template.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace netapi_template.Services.Interfaces;
-
-public interface IPermissionService
+namespace netapi_template.Services.Interfaces
 {
-    // Module Management
-    Task<ApiResponse<PagedResult<ModuleDto>>> GetAllModulesAsync(PaginationQuery? query = null);
-    Task<ApiResponse<ModuleDto>> GetModuleByIdAsync(int id);
-    Task<ApiResponse<ModuleDto>> CreateModuleAsync(CreatePermissionModuleDto createDto);
-    Task<ApiResponse<ModuleDto>> UpdateModuleAsync(int id, UpdatePermissionModuleDto updateDto);
-    Task<ApiResponse<bool>> DeleteModuleAsync(int id);
+    public interface IPermissionService
+    {
+        // Module CRUD
+        Task<ApiResponse<PagedResult<ModuleDto>>> GetAllModulesAsync(PaginationQuery query);
+        Task<ApiResponse<ModuleDto>> GetModuleByIdAsync(int id);
+        Task<ApiResponse<ModuleDto>> CreateModuleAsync(CreatePermissionModuleDto dto);
+        Task<ApiResponse<ModuleDto>> UpdateModuleAsync(int id, UpdatePermissionModuleDto dto);
+        Task<ApiResponse<bool>> DeleteModuleAsync(int id);
 
-    // User Permissions Management
-    Task<ApiResponse<PagedResult<UserPermissionDto>>> GetUserPermissionsAsync(int userId, PaginationQuery? query = null);
-    Task<ApiResponse<UserPermissionDto>> AssignPermissionAsync(CreateUserPermissionDto createDto);
-    Task<ApiResponse<UserPermissionDto>> UpdatePermissionAsync(int permissionId, UpdateUserPermissionDto updateDto);
-    Task<ApiResponse<bool>> RemovePermissionAsync(int permissionId);
-    Task<ApiResponse<bool>> RemoveAllUserPermissionsAsync(int userId);
-
-    // Permission Queries
-    Task<ApiResponse<List<UserPermissionDto>>> GetPermissionsByUserIdAsync(int userId);
-    Task<ApiResponse<List<UserPermissionDto>>> GetPermissionsByModuleIdAsync(int moduleId);
-    Task<ApiResponse<bool>> HasPermissionAsync(int userId, string moduleCode, PermissionType requiredPermission);
-    Task<ApiResponse<Dictionary<string, PermissionType>>> GetUserModulePermissionsAsync(int userId);
-    Task<ApiResponse<bool>> RemoveUserPermissionAsync(int userId, int moduleId);
-
-    // Bulk Operations
-    Task<ApiResponse<List<UserPermissionDto>>> AssignMultiplePermissionsAsync(int userId, List<CreateUserPermissionDto> permissions);
-    Task<ApiResponse<bool>> UpdateUserPermissionsAsync(int userId, List<UpdateUserPermissionDto> permissions);
+        // User Permissions CRUD
+        Task<ApiResponse<List<UserPermissionDto>>> GetPermissionsByUserIdAsync(int userId);
+        Task<ApiResponse<bool>> UpdateUserPermissionsAsync(int userId, List<UpdateUserPermissionDto> permissions);
+        Task<ApiResponse<bool>> RemoveUserPermissionAsync(int userId, int moduleId);
+        Task<ApiResponse<bool>> HasPermissionAsync(int userId, string moduleCode);
+        Task<ApiResponse<Dictionary<string, int>>> GetUserModulePermissionsAsync(int userId);
+        Task<ApiResponse<UserPermissionDto>> AssignPermissionAsync(CreateUserPermissionDto dto);
+    }
 }

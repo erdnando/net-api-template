@@ -12,8 +12,8 @@ using netapi_template.Data;
 namespace netapi_template.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250705165245_InitModuleFields_Clean")]
-    partial class InitModuleFields_Clean
+    [Migration("20250707223759_UserPermissionSeed_Final")]
+    partial class UserPermissionSeed_Final
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,7 +82,7 @@ namespace netapi_template.Migrations
                             Price = 299.99m,
                             Rating = 4.5m,
                             Title = "Premium Headphones",
-                            UpdatedAt = new DateTime(2025, 7, 5, 16, 52, 44, 613, DateTimeKind.Utc).AddTicks(8)
+                            UpdatedAt = new DateTime(2025, 7, 7, 22, 37, 58, 327, DateTimeKind.Utc).AddTicks(9706)
                         },
                         new
                         {
@@ -94,7 +94,7 @@ namespace netapi_template.Migrations
                             Price = 1299.99m,
                             Rating = 4.8m,
                             Title = "Gaming Laptop",
-                            UpdatedAt = new DateTime(2025, 7, 5, 16, 52, 44, 613, DateTimeKind.Utc).AddTicks(1345)
+                            UpdatedAt = new DateTime(2025, 7, 7, 22, 37, 58, 328, DateTimeKind.Utc).AddTicks(1376)
                         });
                 });
 
@@ -105,9 +105,6 @@ namespace netapi_template.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("AdminOnly")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -159,7 +156,6 @@ namespace netapi_template.Migrations
                         new
                         {
                             Id = 1,
-                            AdminOnly = false,
                             Code = "HOME",
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Home dashboard",
@@ -173,7 +169,6 @@ namespace netapi_template.Migrations
                         new
                         {
                             Id = 2,
-                            AdminOnly = false,
                             Code = "TASKS",
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Task management",
@@ -187,7 +182,6 @@ namespace netapi_template.Migrations
                         new
                         {
                             Id = 3,
-                            AdminOnly = false,
                             Code = "USERS",
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "User management",
@@ -201,7 +195,6 @@ namespace netapi_template.Migrations
                         new
                         {
                             Id = 4,
-                            AdminOnly = false,
                             Code = "ROLES",
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Role management",
@@ -215,7 +208,6 @@ namespace netapi_template.Migrations
                         new
                         {
                             Id = 5,
-                            AdminOnly = false,
                             Code = "CATALOGS",
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Catalog management",
@@ -229,7 +221,6 @@ namespace netapi_template.Migrations
                         new
                         {
                             Id = 6,
-                            AdminOnly = false,
                             Code = "PERMISSIONS",
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Permission management",
@@ -243,7 +234,6 @@ namespace netapi_template.Migrations
                         new
                         {
                             Id = 7,
-                            AdminOnly = true,
                             Code = "ADMIN_UTILS",
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Admin utilities",
@@ -486,7 +476,7 @@ namespace netapi_template.Migrations
                             FirstName = "Admin",
                             IsDeleted = false,
                             LastName = "sistema",
-                            PasswordHash = "$2a$11$vBrtikfPT99ECMJKU9.7nefD.oNufTJQL8tToFnGgr7wJPZsuIBWi",
+                            PasswordHash = "$2a$11$cV8dxl/nAg40pP1YcIaoau5s7L3WAK1kUigNNJjRCJ93JHm05e71K",
                             RoleId = 1,
                             Status = "Active"
                         },
@@ -498,7 +488,7 @@ namespace netapi_template.Migrations
                             FirstName = "Erdnando",
                             IsDeleted = false,
                             LastName = "User",
-                            PasswordHash = "$2a$11$h0e/HNMlWYkO7RYNU6M0aeMQZjDgPEOJV6DfFmDmZhpAombPyKr4e",
+                            PasswordHash = "$2a$11$F8dPpwfecyNKVAz86iaDVOYeHJQPmOpaYHbY1yrvHsYBnafWzRvBe",
                             RoleId = 3,
                             Status = "Active"
                         });
@@ -518,9 +508,8 @@ namespace netapi_template.Migrations
                     b.Property<int>("ModuleId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PermissionType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<int>("PermissionType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime");
@@ -543,7 +532,7 @@ namespace netapi_template.Migrations
                             Id = 6,
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModuleId = 1,
-                            PermissionType = "Read",
+                            PermissionType = 20,
                             UserId = 2
                         },
                         new
@@ -551,7 +540,7 @@ namespace netapi_template.Migrations
                             Id = 7,
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModuleId = 2,
-                            PermissionType = "Edit",
+                            PermissionType = 20,
                             UserId = 2
                         },
                         new
@@ -559,7 +548,7 @@ namespace netapi_template.Migrations
                             Id = 8,
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModuleId = 3,
-                            PermissionType = "Read",
+                            PermissionType = 0,
                             UserId = 2
                         },
                         new
@@ -567,7 +556,7 @@ namespace netapi_template.Migrations
                             Id = 9,
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModuleId = 4,
-                            PermissionType = "Write",
+                            PermissionType = 0,
                             UserId = 2
                         },
                         new
@@ -575,8 +564,80 @@ namespace netapi_template.Migrations
                             Id = 10,
                             CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModuleId = 5,
-                            PermissionType = "None",
+                            PermissionType = 20,
                             UserId = 2
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 6,
+                            PermissionType = 0,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 7,
+                            PermissionType = 0,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 1,
+                            PermissionType = 20,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 2,
+                            PermissionType = 0,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 3,
+                            PermissionType = 20,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 4,
+                            PermissionType = 20,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 5,
+                            PermissionType = 0,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 6,
+                            PermissionType = 20,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedAt = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModuleId = 7,
+                            PermissionType = 20,
+                            UserId = 1
                         });
                 });
 

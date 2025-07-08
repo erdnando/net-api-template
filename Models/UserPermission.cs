@@ -16,7 +16,7 @@ public class UserPermission
     public int ModuleId { get; set; }
 
     [Required]
-    public PermissionType PermissionType { get; set; }
+    public int PermissionType { get; set; } = 0; // 0=None, 10=Read, 20=Write
 
     [Column(TypeName = "datetime")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

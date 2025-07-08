@@ -77,7 +77,6 @@ public class RolesController : ControllerBase
     /// Create a new role
     /// </summary>
     [HttpPost]
-    // Skip any attribute that might interfere with direct execution
     [SwaggerOperation(Summary = "Create role", Description = "Create a new role")]
     [SwaggerResponse(201, "Role created successfully", typeof(ApiResponse<RoleDto>))]
     [SwaggerResponse(400, "Invalid request data")]

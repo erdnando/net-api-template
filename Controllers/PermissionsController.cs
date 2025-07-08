@@ -4,6 +4,7 @@ using netapi_template.DTOs;
 using netapi_template.Models;
 using netapi_template.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
+using netapi_template.Attributes;
 
 namespace netapi_template.Controllers;
 
@@ -214,9 +215,9 @@ public class PermissionsController : ControllerBase
     [SwaggerOperation(Summary = "Check user permission", Description = "Check if user has specific permission for a module")]
     [SwaggerResponse(200, "Permission check completed", typeof(ApiResponse<bool>))]
     [SwaggerResponse(404, "User or module not found")]
-    public async Task<IActionResult> CheckUserPermission([FromRoute] int userId, [FromRoute] string moduleCode, [FromQuery] PermissionType requiredPermission = PermissionType.Read)
+    public async Task<IActionResult> CheckUserPermission([FromRoute] int userId, [FromRoute] string moduleCode)
     {
-        var response = await _permissionService.HasPermissionAsync(userId, moduleCode, requiredPermission);
+        var response = await _permissionService.HasPermissionAsync(userId, moduleCode);
         
         if (!response.Success && response.Message.Contains("not found"))
         {
@@ -231,7 +232,7 @@ public class PermissionsController : ControllerBase
     /// </summary>
     [HttpGet("users/{userId}/modules")]
     [SwaggerOperation(Summary = "Get user module permissions", Description = "Get a map of all module permissions for a user")]
-    [SwaggerResponse(200, "Module permissions retrieved successfully", typeof(ApiResponse<Dictionary<string, PermissionType>>))]
+    [SwaggerResponse(200, "Module permissions retrieved successfully", typeof(ApiResponse<Dictionary<string, int>>))]
     [SwaggerResponse(404, "User not found")]
     public async Task<IActionResult> GetUserModulePermissions([FromRoute] int userId)
     {

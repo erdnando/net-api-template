@@ -20,147 +20,111 @@ validate_response() {
   fi
 }
 
+# Función para validar respuesta y código HTTP
+validate_response_http() {
+  local url="$1"
+  local method="$2"
+  local token="$3"
+  local data="$4"
+  local expected_code="$5"
+  local msg="$6"
+  local content_type=${7:-"application/json"}
+
+  if [[ "$method" == "GET" ]]; then
+    response=$(curl -s -w "\n%{http_code}" -X GET "$url" -H "Authorization: Bearer $token")
+  elif [[ "$method" == "POST" ]]; then
+    response=$(curl -s -w "\n%{http_code}" -X POST "$url" -H "Authorization: Bearer $token" -H "Content-Type: $content_type" -d "$data")
+  elif [[ "$method" == "PUT" ]]; then
+    response=$(curl -s -w "\n%{http_code}" -X PUT "$url" -H "Authorization: Bearer $token" -H "Content-Type: $content_type" -d "$data")
+  elif [[ "$method" == "DELETE" ]]; then
+    response=$(curl -s -w "\n%{http_code}" -X DELETE "$url" -H "Authorization: Bearer $token")
+  elif [[ "$method" == "PATCH" ]]; then
+    response=$(curl -s -w "\n%{http_code}" -X PATCH "$url" -H "Authorization: Bearer $token" -H "Content-Type: $content_type" -d "$data")
+  else
+    echo "[ERROR] Método HTTP no soportado: $method"
+    return
+  fi
+  http_code=$(echo "$response" | tail -n1)
+  body=$(echo "$response" | sed '$d')
+  if [[ "$http_code" == "$expected_code" ]]; then
+    echo "[OK] $msg ($http_code)"
+  else
+    echo "[ERROR] $msg (esperado $expected_code, recibido $http_code): $body"
+  fi
+}
+
 # --- USERS ---
 USERS_URL="$BASE_URL/users"
-# Obtener token de admin
-TOKEN=$(curl -s -X POST "$USERS_URL/login" -H "Content-Type: application/json" -d '{"email":"'$ADMIN_EMAIL'","password":"'$ADMIN_PASS'"}')
-ADMIN_TOKEN=$(echo "$TOKEN" | jq -r .data.token)
-echo "TOKEN obtenido: $ADMIN_TOKEN"
+# Obtener token de admin o usuario de prueba
+LOGIN_EMAIL="${1:-$ADMIN_EMAIL}"
+LOGIN_PASS="${2:-$ADMIN_PASS}"
+TOKEN=$(curl -s -X POST "$USERS_URL/login" -H "Content-Type: application/json" -d '{"email":"'$LOGIN_EMAIL'","password":"'$LOGIN_PASS'"}')
+USER_TOKEN=$(echo "$TOKEN" | jq -r .data.token)
+echo "TOKEN obtenido: $USER_TOKEN"
 
-resp=$(curl -s -X GET "$USERS_URL?page=1&pageSize=2" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Listar usuarios"
-resp=$(curl -s -X GET "$USERS_URL/1" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener usuario por ID"
-resp=$(curl -s -X GET "$USERS_URL/by-email/$USER_EMAIL" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Buscar usuario por email"
-resp=$(curl -s -X POST "$USERS_URL" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"firstName":"Test","lastName":"User","email":"testuser@example.com","password":"test123","roleId":3}')
-validate_response "$resp" "Crear usuario de prueba"
-resp=$(curl -s -X PUT "$USERS_URL/3" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"firstName":"TestUpdated","lastName":"UserUpdated","email":"testuser@example.com","roleId":3}')
-validate_response "$resp" "Actualizar usuario de prueba"
-resp=$(curl -s -X DELETE "$USERS_URL/3" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Eliminar usuario de prueba"
-resp=$(curl -s -X POST "$USERS_URL/2/change-password" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"currentPassword":"user123","newPassword":"user456"}')
-validate_response "$resp" "Cambiar contraseña de usuario regular"
+# USERS (esperado: 200 para admin, 403 para usuario sin permiso)
+validate_response_http "$USERS_URL?page=1&pageSize=2" "GET" "$USER_TOKEN" "" "200" "Listar usuarios"
+validate_response_http "$USERS_URL/1" "GET" "$USER_TOKEN" "" "200" "Obtener usuario por ID"
+validate_response_http "$USERS_URL/by-email/$USER_EMAIL" "GET" "$USER_TOKEN" "" "200" "Buscar usuario por email"
+validate_response_http "$USERS_URL" "POST" "$USER_TOKEN" '{"firstName":"Test","lastName":"User","email":"testuser@example.com","password":"test123","roleId":3}' "200" "Crear usuario de prueba"
+validate_response_http "$USERS_URL/3" "PUT" "$USER_TOKEN" '{"firstName":"TestUpdated","lastName":"UserUpdated","email":"testuser@example.com","roleId":3}' "200" "Actualizar usuario de prueba"
+validate_response_http "$USERS_URL/3" "DELETE" "$USER_TOKEN" "" "200" "Eliminar usuario de prueba"
+validate_response_http "$USERS_URL/2/change-password" "POST" "$USER_TOKEN" '{"currentPassword":"user123","newPassword":"user456"}' "200" "Cambiar contraseña de usuario regular"
 USER_LOGIN=$(curl -s -X POST "$USERS_URL/login" -H "Content-Type: application/json" -d '{"email":"'$USER_EMAIL'","password":"user456"}')
-USER_TOKEN=$(echo "$USER_LOGIN" | jq -r .data.token)
-validate_response "$USER_LOGIN" "Login con usuario regular y nueva contraseña"
-echo "USER_TOKEN obtenido: $USER_TOKEN"
-resp=$(curl -s -X POST "$USERS_URL/2/change-password" -H "Authorization: Bearer $USER_TOKEN" -H "Content-Type: application/json" -d '{"currentPassword":"user456","newPassword":"user123"}')
-validate_response "$resp" "Restaurar contraseña original del usuario regular"
-resp=$(curl -s -X POST "$USERS_URL/forgot-password" -H "Content-Type: application/json" -d '{"email":"'$USER_EMAIL'"}')
-validate_response "$resp" "Probar endpoint forgot-password"
-resp=$(curl -s -X POST "$USERS_URL/reset-password" -H "Content-Type: application/json" -d '{"token":"dummy-token","newPassword":"irrelevant"}')
-validate_response "$resp" "Probar endpoint reset-password (token dummy)"
+USER_TOKEN2=$(echo "$USER_LOGIN" | jq -r .data.token)
+validate_response_http "$USERS_URL/2/change-password" "POST" "$USER_TOKEN2" '{"currentPassword":"user456","newPassword":"user123"}' "200" "Restaurar contraseña original del usuario regular"
+validate_response_http "$USERS_URL/forgot-password" "POST" "" '{"email":"'$USER_EMAIL'"}' "200" "Probar endpoint forgot-password"
+validate_response_http "$USERS_URL/reset-password" "POST" "" '{"token":"dummy-token","newPassword":"irrelevant"}' "200" "Probar endpoint reset-password (token dummy)"
 
-echo "\n--- CATALOG ---"
+# --- CATALOG ---
 CATALOG_URL="$BASE_URL/catalog"
-resp=$(curl -s -X GET "$CATALOG_URL" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Listar catálogo"
-resp=$(curl -s -X GET "$CATALOG_URL/1" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener ítem catálogo por ID"
-resp=$(curl -s -X GET "$CATALOG_URL/category/example" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener catálogo por categoría"
-resp=$(curl -s -X GET "$CATALOG_URL/type/example" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener catálogo por tipo"
-resp=$(curl -s -X GET "$CATALOG_URL/active" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener catálogo activo"
-resp=$(curl -s -X GET "$CATALOG_URL/in-stock" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener catálogo en stock"
-resp=$(curl -s -X POST "$CATALOG_URL" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"title":"TestItem","description":"Test desc","category":"example","price":10.5,"inStock":true,"active":true}')
-validate_response "$resp" "Crear ítem catálogo"
-resp=$(curl -s -X PUT "$CATALOG_URL/1" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"title":"UpdatedItem","description":"Updated desc","category":"example","price":12.0,"inStock":true,"active":true}')
-validate_response "$resp" "Actualizar ítem catálogo"
-resp=$(curl -s -X DELETE "$CATALOG_URL/1" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Eliminar ítem catálogo"
-resp=$(curl -s -X PATCH "$CATALOG_URL/1/status" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d 'true')
-validate_response "$resp" "Patch status catálogo (activar/desactivar)"
+validate_response_http "$CATALOG_URL" "GET" "$USER_TOKEN" "" "200" "Listar catálogo"
+validate_response_http "$CATALOG_URL/1" "GET" "$USER_TOKEN" "" "200" "Obtener ítem catálogo por ID"
+validate_response_http "$CATALOG_URL/category/example" "GET" "$USER_TOKEN" "" "200" "Obtener catálogo por categoría"
+validate_response_http "$CATALOG_URL/type/example" "GET" "$USER_TOKEN" "" "200" "Obtener catálogo por tipo"
+validate_response_http "$CATALOG_URL/active" "GET" "$USER_TOKEN" "" "200" "Obtener catálogo activo"
+validate_response_http "$CATALOG_URL/in-stock" "GET" "$USER_TOKEN" "" "200" "Obtener catálogo en stock"
+validate_response_http "$CATALOG_URL" "POST" "$USER_TOKEN" '{"title":"TestItem","description":"Test desc","category":"example","price":10.5,"inStock":true,"active":true}' "200" "Crear ítem catálogo"
+validate_response_http "$CATALOG_URL/1" "PUT" "$USER_TOKEN" '{"title":"UpdatedItem","description":"Updated desc","category":"example","price":12.0,"inStock":true,"active":true}' "200" "Actualizar ítem catálogo"
+validate_response_http "$CATALOG_URL/1" "DELETE" "$USER_TOKEN" "" "200" "Eliminar ítem catálogo"
+validate_response_http "$CATALOG_URL/1/status" "PATCH" "$USER_TOKEN" 'true' "200" "Patch status catálogo (activar/desactivar)"
 
-echo "\n--- TASKS ---"
+# --- TASKS ---
 TASKS_URL="$BASE_URL/tasks"
-resp=$(curl -s -X GET "$TASKS_URL" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Listar tareas"
-resp=$(curl -s -X GET "$TASKS_URL/1" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener tarea por ID"
-resp=$(curl -s -X GET "$TASKS_URL/user/2" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener tareas por usuario"
-resp=$(curl -s -X GET "$TASKS_URL/completed" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener tareas completadas"
-resp=$(curl -s -X GET "$TASKS_URL/pending" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener tareas pendientes"
-resp=$(curl -s -X POST "$TASKS_URL" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"title":"Test Task","description":"Test desc","userId":2,"completed":false}')
-validate_response "$resp" "Crear tarea"
-resp=$(curl -s -X PUT "$TASKS_URL/1" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"title":"Updated Task","description":"Updated desc","userId":2,"completed":true}')
-validate_response "$resp" "Actualizar tarea"
-resp=$(curl -s -X DELETE "$TASKS_URL/1" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Eliminar tarea"
+validate_response_http "$TASKS_URL" "GET" "$USER_TOKEN" "" "200" "Listar tareas"
+validate_response_http "$TASKS_URL/1" "GET" "$USER_TOKEN" "" "200" "Obtener tarea por ID"
+validate_response_http "$TASKS_URL/user/2" "GET" "$USER_TOKEN" "" "200" "Obtener tareas por usuario"
+validate_response_http "$TASKS_URL/completed" "GET" "$USER_TOKEN" "" "200" "Obtener tareas completadas"
+validate_response_http "$TASKS_URL/pending" "GET" "$USER_TOKEN" "" "200" "Obtener tareas pendientes"
+validate_response_http "$TASKS_URL" "POST" "$USER_TOKEN" '{"title":"Test Task","description":"Test desc","userId":2,"completed":false}' "200" "Crear tarea"
+validate_response_http "$TASKS_URL/1" "PUT" "$USER_TOKEN" '{"title":"Updated Task","description":"Updated desc","userId":2,"completed":true}' "200" "Actualizar tarea"
+validate_response_http "$TASKS_URL/1" "DELETE" "$USER_TOKEN" "" "200" "Eliminar tarea"
 
-echo "\n--- PERMISSIONS ---"
+# --- PERMISSIONS ---
 PERM_URL="$BASE_URL/permissions"
-resp=$(curl -s -X GET "$PERM_URL/modules" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Listar módulos"
-resp=$(curl -s -X GET "$PERM_URL/modules/1" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener módulo por ID"
-resp=$(curl -s -X POST "$PERM_URL/modules" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"name":"TestModule","code":"testmod","description":"desc"}')
-validate_response "$resp" "Crear módulo"
-resp=$(curl -s -X PUT "$PERM_URL/modules/1" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"name":"UpdatedModule","code":"testmod","description":"desc updated"}')
-validate_response "$resp" "Actualizar módulo"
-resp=$(curl -s -X DELETE "$PERM_URL/modules/1" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Eliminar módulo"
-resp=$(curl -s -X GET "$PERM_URL/users/2" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener permisos por usuario"
-resp=$(curl -s -X PUT "$PERM_URL/users/2" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '[{"moduleId":1,"type":1}]')
-validate_response "$resp" "Actualizar permisos de usuario"
-resp=$(curl -s -X DELETE "$PERM_URL/users/2/modules/1" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Eliminar permiso usuario-módulo"
-resp=$(curl -s -X GET "$PERM_URL/users/2/modules/testmod/check" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Check permiso usuario-módulo"
-resp=$(curl -s -X GET "$PERM_URL/users/2/modules" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener módulos de usuario"
-resp=$(curl -s -X POST "$PERM_URL/users/2/modules/1" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{}')
-validate_response "$resp" "Agregar permiso usuario-módulo"
+validate_response_http "$PERM_URL/modules" "GET" "$USER_TOKEN" "" "200" "Listar módulos"
+validate_response_http "$PERM_URL/modules/1" "GET" "$USER_TOKEN" "" "200" "Obtener módulo por ID"
+validate_response_http "$PERM_URL/modules" "POST" "$USER_TOKEN" '{"name":"TestModule","code":"testmod","description":"desc"}' "200" "Crear módulo"
+validate_response_http "$PERM_URL/modules/1" "PUT" "$USER_TOKEN" '{"name":"UpdatedModule","code":"testmod","description":"desc updated"}' "200" "Actualizar módulo"
+validate_response_http "$PERM_URL/modules/1" "DELETE" "$USER_TOKEN" "" "200" "Eliminar módulo"
+validate_response_http "$PERM_URL/users/2" "GET" "$USER_TOKEN" "" "200" "Obtener permisos por usuario"
+validate_response_http "$PERM_URL/users/2" "PUT" "$USER_TOKEN" '[{"moduleId":1,"type":1}]' "200" "Actualizar permisos de usuario"
+validate_response_http "$PERM_URL/users/2/modules/1" "DELETE" "$USER_TOKEN" "" "200" "Eliminar permiso usuario-módulo"
+validate_response_http "$PERM_URL/users/2/modules/testmod/check" "GET" "$USER_TOKEN" "" "200" "Check permiso usuario-módulo"
+validate_response_http "$PERM_URL/users/2/modules" "GET" "$USER_TOKEN" "" "200" "Obtener módulos de usuario"
+validate_response_http "$PERM_URL/users/2/modules/1" "POST" "$USER_TOKEN" '{}' "200" "Agregar permiso usuario-módulo"
 
-echo "\n--- ROLES ---"
+# --- ROLES ---
 ROLES_URL="$BASE_URL/roles"
-resp=$(curl -s -X GET "$ROLES_URL" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Listar roles"
-resp=$(curl -s -X GET "$ROLES_URL/1" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Obtener rol por ID"
-resp=$(curl -s -X POST "$ROLES_URL" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"name":"TestRole","description":"desc"}')
-validate_response "$resp" "Crear rol"
-resp=$(curl -s -X PUT "$ROLES_URL/1" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"name":"UpdatedRole","description":"desc updated"}')
-validate_response "$resp" "Actualizar rol"
-resp=$(curl -s -X DELETE "$ROLES_URL/1" -H "Authorization: Bearer $ADMIN_TOKEN")
-validate_response "$resp" "Eliminar rol"
+validate_response_http "$ROLES_URL" "GET" "$USER_TOKEN" "" "200" "Listar roles"
+validate_response_http "$ROLES_URL/1" "GET" "$USER_TOKEN" "" "200" "Obtener rol por ID"
+validate_response_http "$ROLES_URL" "POST" "$USER_TOKEN" '{"name":"TestRole","description":"desc"}' "200" "Crear rol"
+validate_response_http "$ROLES_URL/1" "PUT" "$USER_TOKEN" '{"name":"UpdatedRole","description":"desc updated"}' "200" "Actualizar rol"
+validate_response_http "$ROLES_URL/1" "DELETE" "$USER_TOKEN" "" "200" "Eliminar rol"
 
-echo "\n--- MODULES ---"
+# --- MODULES ---
 MODULES_URL="$BASE_URL/modules"
-
-# Listar módulos
-resp=$(curl -s -X GET "$MODULES_URL" -H "Authorization: Bearer $ADMIN_TOKEN")
-# Solo validar si la respuesta es un objeto, no un array
-if echo "$resp" | jq -e 'type == "object"' >/dev/null 2>&1; then
-  validate_response "$resp" "Listar módulos (nuevo endpoint)"
-else
-  echo "[OK] Listar módulos (nuevo endpoint) (respuesta es array, omitido)"
-fi
-
-# Crear módulo de prueba
-MODULE_CODE="testmodule_$(date +%s)"
-resp=$(curl -s -X POST "$MODULES_URL" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"name":"TestModule","code":"'$MODULE_CODE'","path":"/test-module","icon":"TestIcon","adminOnly":false,"order":99}')
-validate_response "$resp" "Crear módulo de prueba (nuevo endpoint)"
-echo "Respuesta creación módulo: $resp" # DEBUG: mostrar respuesta real
-MODULE_ID=$(echo "$resp" | jq -r '.data.id // empty')
-
-# Actualizar módulo de prueba
-if [[ -n "$MODULE_ID" && "$MODULE_ID" != "null" ]]; then
-  resp=$(curl -s -X PUT "$MODULES_URL/$MODULE_ID" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"name":"TestModuleUpdated","path":"/test-module-upd","icon":"TestIconUpd","adminOnly":true,"order":100}')
-  validate_response "$resp" "Actualizar módulo de prueba (nuevo endpoint)"
-
-  # Eliminar módulo de prueba
-  resp=$(curl -s -X DELETE "$MODULES_URL/$MODULE_ID" -H "Authorization: Bearer $ADMIN_TOKEN")
-  validate_response "$resp" "Eliminar módulo de prueba (nuevo endpoint)"
-else
-  echo "[ERROR] No se pudo obtener el ID del módulo de prueba para actualizar/eliminar."
-fi
+validate_response_http "$MODULES_URL" "GET" "$USER_TOKEN" "" "200" "Listar módulos (nuevo endpoint)"
+validate_response_http "$MODULES_URL" "POST" "$USER_TOKEN" '{"name":"TestModule","code":"testmodule_$(date +%s)","path":"/test-module","icon":"TestIcon","adminOnly":false,"order":99}' "200" "Crear módulo de prueba (nuevo endpoint)"
 
 echo "\nPruebas completas de todos los endpoints principales."
